@@ -450,6 +450,35 @@ body.admin-mode .ae{position:relative}
 
 
 
+<!-- VERIFY CERTIFICATE -->
+<section id="verify">
+  <div class="max-w">
+    <div class="verify-wrap">
+      <div class="section-tag ae" id="edit-verify-tag">Certificate Verification</div>
+      <h2 class="section-h2">Verify Your <em>Certificate</em></h2>
+      <p class="section-p ae" id="edit-verify-p" style="margin:0 auto">Verify the authenticity of any certificate issued by our institution.</p>
+      <div class="verify-card">
+        <div class="verify-input-wrap">
+          <input class="verify-input" id="cert-input" placeholder="Enter Certificate ID (e.g. NGA-2024-0001)">
+          <span class="verify-icon">🔍</span>
+        </div>
+        <button class="verify-btn" onclick="verifyCert()">🔐 Verify Certificate</button>
+        <div id="verify-result"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCREDITATIONS -->
+<section id="accreditations">
+  <div class="max-w">
+    <div class="section-tag ae" id="edit-accred-tag">Memberships & Affiliations</div>
+    <h2 class="section-h2">Our <em>Accreditations</em></h2>
+    <p class="section-p ae" id="edit-accred-p">Proudly affiliated with leading Indian government bodies and industry organizations.</p>
+    <div class="accred-grid" id="accred-grid"></div>
+  </div>
+</section>
+
 <!-- TESTIMONIALS -->
 <section id="testimonials">
   <div class="max-w">
@@ -577,7 +606,7 @@ body.admin-mode .ae{position:relative}
 // Apna databaseURL niche daalo (example format dikhaya hai)
 // =============================================
 const SUPABASE_URL = 'https://nrbrmcgtvmdwsnlqonyl.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_RCzwutHzIWIAw_f2Bqz9Bg_ulfC9zfq';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYnJtY2d0dm1kd3NubHFvbnlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzE4MzgsImV4cCI6MjA5NTIwNzgzOH0.HzFK6RES3vXKA7fM8oyr57jz6Xtie2PgzD8xaOyROuc';
 const ROW_ID = 1; // single row mein poora site state store hoga
 
 // =============================================
@@ -704,7 +733,8 @@ const DEF = {
 let S = JSON.parse(JSON.stringify(DEF));
 let adminMode = false;
 let adminAuthenticated = false;
-let _realtimeChannel = null;
+let _lastDataHash = '';
+let _listenerStarted = false;
 
 // =============================================
 // SUPABASE HELPERS
@@ -738,33 +768,25 @@ function mergeWithDefaults(saved){
 async function saveState(){
   if(!S.leads) S.leads=[];
   try{
-    // Pehle check karo row exist karti hai ya nahi
-    const checkRes = await fetch(SB.url + '?id=eq.' + ROW_ID, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    const res = await fetch(SB.url + '?id=eq.' + ROW_ID, {
+      method: 'PATCH',
+      headers: SB.headers,
+      body: JSON.stringify({ data: S })
     });
-    const existing = await checkRes.json();
-
-    let res;
-    if(existing && existing.length > 0){
-      // UPDATE existing row
-      res = await fetch(SB.url + '?id=eq.' + ROW_ID, {
-        method: 'PATCH',
-        headers: SB.headers,
-        body: JSON.stringify({ data: S })
-      });
-    } else {
-      // INSERT new row
-      res = await fetch(SB.url, {
+    if(!res.ok){
+      // Row nahi hai — insert karo
+      const res2 = await fetch(SB.url, {
         method: 'POST',
-        headers: { ...SB.headers, 'Prefer': 'return=minimal' },
+        headers: SB.headers,
         body: JSON.stringify({ id: ROW_ID, data: S })
       });
+      if(!res2.ok){
+        const t = await res2.text();
+        throw new Error(res2.status + ': ' + t);
+      }
     }
-    if(!res.ok){
-      const errText = await res.text();
-      throw new Error('Supabase save failed: ' + res.status + ' ' + errText);
-    }
-    // showToast('✅ Saved to cloud!'); // optional
+    // Update local hash taaki apna khud ka polling trigger na ho
+    _lastDataHash = JSON.stringify(S);
   } catch(e){
     console.error('Supabase save error:', e);
     showToast('⚠ Save failed: ' + e.message);
@@ -773,8 +795,8 @@ async function saveState(){
 
 async function resetAll(){
   if(!confirm('Reset ALL content to default? This cannot be undone.')) return;
+  S = JSON.parse(JSON.stringify(DEF));
   try{
-    S = JSON.parse(JSON.stringify(DEF));
     await fetch(SB.url + '?id=eq.' + ROW_ID, {
       method: 'PATCH',
       headers: SB.headers,
@@ -786,70 +808,59 @@ async function resetAll(){
 
 async function loadFromSupabase(){
   try{
-    const res = await fetch(SB.url + '?id=eq.' + ROW_ID, {
+    const res = await fetch(SB.url + '?id=eq.' + ROW_ID + '&select=data', {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
     });
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const rows = await res.json();
-    if(rows && rows.length > 0 && rows[0].data){
-      S = mergeWithDefaults(rows[0].data);
+    if(rows && rows.length > 0 && rows[0].data && Object.keys(rows[0].data).length > 0){
+      const newHash = JSON.stringify(rows[0].data);
+      if(newHash !== _lastDataHash){
+        _lastDataHash = newHash;
+        S = mergeWithDefaults(rows[0].data);
+        renderAll();
+      }
+    } else {
+      // Supabase mein empty data hai — pehli baar load, defaults save karo
+      _lastDataHash = JSON.stringify(S);
+      renderAll();
+      // Save defaults to Supabase
+      await saveState();
     }
   } catch(e){
     console.warn('Supabase load error:', e);
+    renderAll();
   }
-  renderAll();
-  startRealtimeListener();
+  if(!_listenerStarted){
+    _listenerStarted = true;
+    startRealtimeListener();
+  }
 }
 
 // =============================================
-// SUPABASE REALTIME — sabke phones pe live update
+// REALTIME POLLING — har 3 second mein check
+// Guaranteed to work on ALL phones, ALL browsers
 // =============================================
 function startRealtimeListener(){
-  // Supabase Realtime via WebSocket
-  const wsUrl = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
-  let ws;
-
-  function connect(){
+  // Polling: har 3 second mein Supabase se latest data fetch
+  setInterval(async ()=>{
+    if(adminMode) return; // Admin khud edit kar raha hai, uske liye polling pause
     try{
-      ws = new WebSocket(wsUrl);
-    } catch(e){ return; }
-
-    ws.onopen = () => {
-      // Join channel for site_state table
-      ws.send(JSON.stringify({
-        topic: 'realtime:public:site_state',
-        event: 'phx_join',
-        payload: { config: { broadcast: { self: false }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'site_state' }] } },
-        ref: '1'
-      }));
-    };
-
-    ws.onmessage = (msg) => {
-      try{
-        const d = JSON.parse(msg.data);
-        // Heartbeat reply karo
-        if(d.event === 'heartbeat'){
-          ws.send(JSON.stringify({ topic: 'phoenix', event: 'heartbeat', payload: {}, ref: d.ref }));
-          return;
+      const res = await fetch(SB.url + '?id=eq.' + ROW_ID + '&select=data', {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      });
+      if(!res.ok) return;
+      const rows = await res.json();
+      if(rows && rows.length > 0 && rows[0].data){
+        const newHash = JSON.stringify(rows[0].data);
+        if(newHash !== _lastDataHash){
+          _lastDataHash = newHash;
+          S = mergeWithDefaults(rows[0].data);
+          renderAll();
         }
-        // DB change aaya — reload data
-        if(d.event === 'postgres_changes' || (d.payload && d.payload.data && d.payload.data.type)){
-          loadFromSupabase();
-        }
-      } catch(err){}
-    };
-
-    ws.onclose = () => {
-      // Auto-reconnect after 3 seconds
-      setTimeout(connect, 3000);
-    };
-
-    ws.onerror = () => {
-      ws.close();
-    };
-  }
-
-  connect();
+      }
+    } catch(e){ /* network error, try next time */ }
+  }, 3000);
 }
 
 // =============================================
@@ -1040,12 +1051,16 @@ function renderSettings(){
     const el = document.getElementById(id);
     if(el && ss[key]!==undefined && ss[key]!=='') el.innerHTML = ss[key];
   });
-  document.title = ss.siteName + ' | Elite International Certifications';
-  document.getElementById('page-title').textContent = ss.siteName + ' | Elite International Certifications';
+  if(ss.siteName){
+    document.title = ss.siteName + ' | Elite International Certifications';
+    const pt = document.getElementById('page-title');
+    if(pt) pt.textContent = ss.siteName + ' | Elite International Certifications';
+  }
 }
 
 function renderTrustRows(){
   const c = document.getElementById('trust-rows-container');
+  if(!c) return;
   c.innerHTML = S.trustRows.map((r,i)=>`
     <div class="trust-row" style="position:relative">
       <div class="trust-icon" style="background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.2)">${r.icon}</div>
@@ -1057,6 +1072,7 @@ function renderTrustRows(){
 function renderTrustBar(){
   const items = S.trustBar;
   const c = document.getElementById('trustbar-inner');
+  if(!c) return;
   c.innerHTML = items.map((t,i)=>`<div class="tb-item"><span>${t.icon}</span><span style="color:var(--text)">${t.label}</span></div>${i<items.length-1?'<div class="tb-divider"></div>':''}`).join('');
 }
 
@@ -1090,17 +1106,21 @@ function renderCourses(){
 }
 
 function renderEnrollBenefits(){
-  document.getElementById('enroll-benefits').innerHTML = S.enrollBenefits.map(b=>`
+  const eb = document.getElementById('enroll-benefits');
+  if(eb) eb.innerHTML = S.enrollBenefits.map(b=>`
     <div class="benefit-item">
       <div class="benefit-icon">${b.icon}</div>
       <div><div class="benefit-h4">${b.title}</div><div class="benefit-p">${b.desc}</div></div>
     </div>`).join('');
-  document.getElementById('trust-seals').innerHTML = S.trustSeals.map(s=>`
+  const ts = document.getElementById('trust-seals');
+  if(ts) ts.innerHTML = S.trustSeals.map(s=>`
     <div class="seal"><span>${s}</span></div>`).join('');
 }
 
 function renderAccreditations(){
-  document.getElementById('accred-grid').innerHTML = S.accreditations.map((a,i)=>`
+  const el = document.getElementById('accred-grid');
+  if(!el) return;
+  el.innerHTML = S.accreditations.map((a,i)=>`
     <div class="accred-card" style="position:relative">
       <button class="del-btn" onclick="deleteAccred(${i})">✕</button>
       <div class="accred-logo" style="background:${a.color};color:white">${a.abbr}</div>
@@ -1109,7 +1129,9 @@ function renderAccreditations(){
 }
 
 function renderTestimonials(){
-  document.getElementById('testi-grid').innerHTML = S.testimonials.map((t,i)=>`
+  const tg = document.getElementById('testi-grid');
+  if(!tg) return;
+  tg.innerHTML = S.testimonials.map((t,i)=>`
     <div class="testi-card" style="position:relative">
       <button class="del-btn" onclick="deleteTesti(${i})">✕</button>
       <div class="testi-stars">${'★'.repeat(t.rating)}</div>
@@ -1123,6 +1145,7 @@ function renderTestimonials(){
 
 function populateCourseDropdown(){
   const sel = document.getElementById('f-prog');
+  if(!sel) return;
   sel.innerHTML = '<option value="">Select Program</option>' + S.courses.map(c=>`<option value="${c.title}">${c.title}</option>`).join('');
 }
 
