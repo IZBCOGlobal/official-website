@@ -511,6 +511,19 @@ body.admin-mode .ae{position:relative}
   </div>
 </footer>
 
+<!-- FIREBASE SETUP BANNER -->
+<div id="firebase-setup-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#1a1a2e,#16213e);border-bottom:2px solid #C9A96E;padding:16px 24px;font-family:'DM Sans',sans-serif">
+  <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <span style="font-size:24px">🔥</span>
+    <div style="flex:1;min-width:200px">
+      <div style="color:#C9A96E;font-weight:800;font-size:14px;margin-bottom:2px">Firebase Setup Required — Real-Time Sync ke liye</div>
+      <div style="color:#7B7B9A;font-size:12px">Niche apna Firebase Database URL daalo → file save karo → sabke phones pe changes live ho jaayenge!</div>
+    </div>
+    <a href="https://console.firebase.google.com" target="_blank" style="background:#C9A96E;color:#080810;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap">Open Firebase Console →</a>
+    <button onclick="document.getElementById('firebase-setup-banner').style.display='none'" style="background:transparent;border:1px solid #7B7B9A;color:#7B7B9A;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px">Dismiss</button>
+  </div>
+</div>
+
 <!-- WHATSAPP FLOAT BUTTON -->
 <div id="wa-float">
   <button class="wa-btn" onclick="openWhatsApp('')">
@@ -570,7 +583,16 @@ body.admin-mode .ae{position:relative}
 
 <div id="modal-root"></div>
 
-<script>
+<script type="module">
+// =============================================
+// FIREBASE CONFIG — apna Firebase project ID yahan daalo
+// Steps: https://console.firebase.google.com → New Project → Realtime Database → Start in test mode
+// Apna databaseURL niche daalo (example format dikhaya hai)
+// =============================================
+const FIREBASE_DB_URL = 'https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com';
+// ⬆️ IMPORTANT: Upar wali line mein apna Firebase Realtime Database URL daalo!
+// Example: 'https://eduverse-abc123-default-rtdb.firebaseio.com'
+
 // =============================================
 // CONFIG
 // =============================================
@@ -692,35 +714,109 @@ const DEF = {
   leads:[],
 };
 
-let S = loadState();
+let S = JSON.parse(JSON.stringify(DEF)); // start with defaults, Firebase will override
 let adminMode = false;
 let adminAuthenticated = false;
+let _firebaseReady = false;
 
-function loadState(){
-  try{
-    const d=localStorage.getItem('evg_state_v2');
-    if(!d) return JSON.parse(JSON.stringify(DEF));
-    const saved=JSON.parse(d);
-    // Deep merge: DEF values fill in any missing keys from saved state
-    const merged=JSON.parse(JSON.stringify(DEF));
-    if(saved.siteSettings){
-      Object.keys(saved.siteSettings).forEach(k=>{
-        if(saved.siteSettings[k]!==undefined && saved.siteSettings[k]!=='')
-          merged.siteSettings[k]=saved.siteSettings[k];
-      });
-    }
-    ['courses','testimonials','accreditations','trustRows','trustBar','enrollBenefits','trustSeals','leads'].forEach(k=>{
-      if(saved[k]!==undefined) merged[k]=saved[k];
+// =============================================
+// FIREBASE REALTIME DATABASE — REAL-TIME SYNC
+// =============================================
+function mergeWithDefaults(saved){
+  const merged = JSON.parse(JSON.stringify(DEF));
+  if(!saved) return merged;
+  if(saved.siteSettings){
+    Object.keys(saved.siteSettings).forEach(k=>{
+      if(saved.siteSettings[k]!==undefined && saved.siteSettings[k]!=='')
+        merged.siteSettings[k]=saved.siteSettings[k];
     });
-    if(saved.certificates) merged.certificates=saved.certificates;
-    return merged;
-  }catch(e){return JSON.parse(JSON.stringify(DEF));}
+  }
+  ['courses','testimonials','accreditations','trustRows','trustBar','enrollBenefits','trustSeals','leads'].forEach(k=>{
+    if(saved[k]!==undefined) merged[k]=saved[k];
+  });
+  if(saved.certificates) merged.certificates=saved.certificates;
+  return merged;
 }
-function saveState(){
+
+async function saveState(){
   if(!S.leads) S.leads=[];
-  localStorage.setItem('evg_state_v2',JSON.stringify(S));
+  // Save to Firebase (real-time cloud sync — sabke phones pe jaayega)
+  try{
+    const res = await fetch(FIREBASE_DB_URL+'/evg_state.json',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(S)
+    });
+    if(!res.ok) throw new Error('Firebase save failed: '+res.status);
+  }catch(e){
+    console.warn('Firebase save error:',e);
+    // Fallback: local storage bhi save karo agar Firebase fail ho
+    try{ localStorage.setItem('evg_state_v2',JSON.stringify(S)); }catch(_){}
+    showToast('⚠ Cloud save failed. Changes saved locally only.');
+  }
 }
-function resetAll(){if(confirm('Reset ALL content to default? This cannot be undone.')){localStorage.removeItem('evg_state_v2');localStorage.removeItem('evg_state');location.reload();}}
+
+async function resetAll(){
+  if(!confirm('Reset ALL content to default? This cannot be undone.')) return;
+  try{
+    await fetch(FIREBASE_DB_URL+'/evg_state.json',{method:'DELETE'});
+    localStorage.removeItem('evg_state_v2');
+    location.reload();
+  }catch(e){
+    localStorage.removeItem('evg_state_v2');
+    location.reload();
+  }
+}
+
+// Real-time listener — Firebase se changes aate hi sabke phones pe update hoga
+function startFirebaseListener(){
+  // Firebase REST API ka SSE (Server-Sent Events) use karke real-time updates
+  const evtSource = new EventSource(FIREBASE_DB_URL+'/evg_state.json?accept=text/event-stream');
+  evtSource.addEventListener('put', function(e){
+    try{
+      const payload = JSON.parse(e.data);
+      const data = payload.data;
+      if(data){
+        S = mergeWithDefaults(data);
+      } else {
+        // Data delete hua (reset) — defaults pe wapas jao
+        S = JSON.parse(JSON.stringify(DEF));
+      }
+      renderAll();
+    }catch(err){ console.warn('Firebase listener parse error:',err); }
+  });
+  evtSource.addEventListener('patch', function(e){
+    try{
+      // Partial update — full re-fetch karo
+      loadFromFirebase();
+    }catch(err){}
+  });
+  evtSource.onerror = function(){
+    console.warn('Firebase SSE connection error. Will retry automatically.');
+  };
+}
+
+async function loadFromFirebase(){
+  try{
+    const res = await fetch(FIREBASE_DB_URL+'/evg_state.json');
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    if(data){
+      S = mergeWithDefaults(data);
+    }
+    // else S remains DEF (already set)
+  }catch(e){
+    console.warn('Firebase load error, using localStorage fallback:',e);
+    try{
+      const d = localStorage.getItem('evg_state_v2');
+      if(d) S = mergeWithDefaults(JSON.parse(d));
+    }catch(_){}
+  }
+  _firebaseReady = true;
+  renderAll();
+  // Start real-time listener after first load
+  try{ startFirebaseListener(); }catch(_){}
+}
 
 // =============================================
 // WHATSAPP
@@ -1471,15 +1567,21 @@ window.addEventListener('scroll',()=>{
 // INIT
 // =============================================
 document.addEventListener('DOMContentLoaded',()=>{
-  // Clear old storage key if exists (migration)
-  if(localStorage.getItem('evg_state') && !localStorage.getItem('evg_state_v2')){
-    localStorage.removeItem('evg_state');
-  }
   if(!S.leads) S.leads=[];
+  // Pehle default data render karo (fast load)
   renderAll();
   checkHash();
   window.addEventListener('hashchange',checkHash);
   document.getElementById('cert-input').addEventListener('keydown',e=>{if(e.key==='Enter')verifyCert();});
+  // Firebase URL check
+  if(FIREBASE_DB_URL.includes('YOUR-PROJECT-ID')){
+    document.getElementById('firebase-setup-banner').style.display='block';
+    document.getElementById('navbar').style.top='72px';
+    document.getElementById('hero').style.paddingTop='192px';
+  } else {
+    // Phir Firebase se latest data load karo (cloud sync)
+    loadFromFirebase();
+  }
 });
 
 // Expose globals
