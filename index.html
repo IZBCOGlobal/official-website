@@ -511,19 +511,6 @@ body.admin-mode .ae{position:relative}
   </div>
 </footer>
 
-<!-- FIREBASE SETUP BANNER -->
-<div id="firebase-setup-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#1a1a2e,#16213e);border-bottom:2px solid #C9A96E;padding:16px 24px;font-family:'DM Sans',sans-serif">
-  <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-    <span style="font-size:24px">🔥</span>
-    <div style="flex:1;min-width:200px">
-      <div style="color:#C9A96E;font-weight:800;font-size:14px;margin-bottom:2px">Firebase Setup Required — Real-Time Sync ke liye</div>
-      <div style="color:#7B7B9A;font-size:12px">Niche apna Firebase Database URL daalo → file save karo → sabke phones pe changes live ho jaayenge!</div>
-    </div>
-    <a href="https://console.firebase.google.com" target="_blank" style="background:#C9A96E;color:#080810;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap">Open Firebase Console →</a>
-    <button onclick="document.getElementById('firebase-setup-banner').style.display='none'" style="background:transparent;border:1px solid #7B7B9A;color:#7B7B9A;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px">Dismiss</button>
-  </div>
-</div>
-
 <!-- WHATSAPP FLOAT BUTTON -->
 <div id="wa-float">
   <button class="wa-btn" onclick="openWhatsApp('')">
@@ -589,15 +576,15 @@ body.admin-mode .ae{position:relative}
 // Steps: https://console.firebase.google.com → New Project → Realtime Database → Start in test mode
 // Apna databaseURL niche daalo (example format dikhaya hai)
 // =============================================
-const FIREBASE_DB_URL = 'https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com';
-// ⬆️ IMPORTANT: Upar wali line mein apna Firebase Realtime Database URL daalo!
-// Example: 'https://eduverse-abc123-default-rtdb.firebaseio.com'
+const SUPABASE_URL = 'https://nrbrmcgtvmdwsnlqonyl.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_RCzwutHzIWIAw_f2Bqz9Bg_ulfC9zfq';
+const ROW_ID = 1; // single row mein poora site state store hoga
 
 // =============================================
 // CONFIG
 // =============================================
 const ADMIN_PASS = 'CR8';
-const WA_NUMBER = '919599356678'; // India +91
+const WA_NUMBER = '919599356678';
 const WA_MSG_DEFAULT = 'Hello! I want to take admission in your courses. Please guide me with the details and enrollment process.';
 
 // =============================================
@@ -714,14 +701,24 @@ const DEF = {
   leads:[],
 };
 
-let S = JSON.parse(JSON.stringify(DEF)); // start with defaults, Firebase will override
+let S = JSON.parse(JSON.stringify(DEF));
 let adminMode = false;
 let adminAuthenticated = false;
-let _firebaseReady = false;
+let _realtimeChannel = null;
 
 // =============================================
-// FIREBASE REALTIME DATABASE — REAL-TIME SYNC
+// SUPABASE HELPERS
 // =============================================
+const SB = {
+  headers: {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  },
+  url: SUPABASE_URL + '/rest/v1/site_state'
+};
+
 function mergeWithDefaults(saved){
   const merged = JSON.parse(JSON.stringify(DEF));
   if(!saved) return merged;
@@ -740,82 +737,119 @@ function mergeWithDefaults(saved){
 
 async function saveState(){
   if(!S.leads) S.leads=[];
-  // Save to Firebase (real-time cloud sync — sabke phones pe jaayega)
   try{
-    const res = await fetch(FIREBASE_DB_URL+'/evg_state.json',{
-      method:'PUT',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(S)
+    // Pehle check karo row exist karti hai ya nahi
+    const checkRes = await fetch(SB.url + '?id=eq.' + ROW_ID, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
     });
-    if(!res.ok) throw new Error('Firebase save failed: '+res.status);
-  }catch(e){
-    console.warn('Firebase save error:',e);
-    // Fallback: local storage bhi save karo agar Firebase fail ho
-    try{ localStorage.setItem('evg_state_v2',JSON.stringify(S)); }catch(_){}
-    showToast('⚠ Cloud save failed. Changes saved locally only.');
+    const existing = await checkRes.json();
+
+    let res;
+    if(existing && existing.length > 0){
+      // UPDATE existing row
+      res = await fetch(SB.url + '?id=eq.' + ROW_ID, {
+        method: 'PATCH',
+        headers: SB.headers,
+        body: JSON.stringify({ data: S })
+      });
+    } else {
+      // INSERT new row
+      res = await fetch(SB.url, {
+        method: 'POST',
+        headers: { ...SB.headers, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ id: ROW_ID, data: S })
+      });
+    }
+    if(!res.ok){
+      const errText = await res.text();
+      throw new Error('Supabase save failed: ' + res.status + ' ' + errText);
+    }
+    // showToast('✅ Saved to cloud!'); // optional
+  } catch(e){
+    console.error('Supabase save error:', e);
+    showToast('⚠ Save failed: ' + e.message);
   }
 }
 
 async function resetAll(){
   if(!confirm('Reset ALL content to default? This cannot be undone.')) return;
   try{
-    await fetch(FIREBASE_DB_URL+'/evg_state.json',{method:'DELETE'});
-    localStorage.removeItem('evg_state_v2');
-    location.reload();
-  }catch(e){
-    localStorage.removeItem('evg_state_v2');
-    location.reload();
-  }
+    S = JSON.parse(JSON.stringify(DEF));
+    await fetch(SB.url + '?id=eq.' + ROW_ID, {
+      method: 'PATCH',
+      headers: SB.headers,
+      body: JSON.stringify({ data: S })
+    });
+  } catch(e){}
+  location.reload();
 }
 
-// Real-time listener — Firebase se changes aate hi sabke phones pe update hoga
-function startFirebaseListener(){
-  // Firebase REST API ka SSE (Server-Sent Events) use karke real-time updates
-  const evtSource = new EventSource(FIREBASE_DB_URL+'/evg_state.json?accept=text/event-stream');
-  evtSource.addEventListener('put', function(e){
-    try{
-      const payload = JSON.parse(e.data);
-      const data = payload.data;
-      if(data){
-        S = mergeWithDefaults(data);
-      } else {
-        // Data delete hua (reset) — defaults pe wapas jao
-        S = JSON.parse(JSON.stringify(DEF));
-      }
-      renderAll();
-    }catch(err){ console.warn('Firebase listener parse error:',err); }
-  });
-  evtSource.addEventListener('patch', function(e){
-    try{
-      // Partial update — full re-fetch karo
-      loadFromFirebase();
-    }catch(err){}
-  });
-  evtSource.onerror = function(){
-    console.warn('Firebase SSE connection error. Will retry automatically.');
-  };
-}
-
-async function loadFromFirebase(){
+async function loadFromSupabase(){
   try{
-    const res = await fetch(FIREBASE_DB_URL+'/evg_state.json');
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data = await res.json();
-    if(data){
-      S = mergeWithDefaults(data);
+    const res = await fetch(SB.url + '?id=eq.' + ROW_ID, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json();
+    if(rows && rows.length > 0 && rows[0].data){
+      S = mergeWithDefaults(rows[0].data);
     }
-    // else S remains DEF (already set)
-  }catch(e){
-    console.warn('Firebase load error, using localStorage fallback:',e);
-    try{
-      const d = localStorage.getItem('evg_state_v2');
-      if(d) S = mergeWithDefaults(JSON.parse(d));
-    }catch(_){}
+  } catch(e){
+    console.warn('Supabase load error:', e);
   }
-  _firebaseReady = true;
   renderAll();
-  // Start real-time listener after first load
-  try{ startFirebaseListener(); }catch(_){}
+  startRealtimeListener();
+}
+
+// =============================================
+// SUPABASE REALTIME — sabke phones pe live update
+// =============================================
+function startRealtimeListener(){
+  // Supabase Realtime via WebSocket
+  const wsUrl = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
+  let ws;
+
+  function connect(){
+    try{
+      ws = new WebSocket(wsUrl);
+    } catch(e){ return; }
+
+    ws.onopen = () => {
+      // Join channel for site_state table
+      ws.send(JSON.stringify({
+        topic: 'realtime:public:site_state',
+        event: 'phx_join',
+        payload: { config: { broadcast: { self: false }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'site_state' }] } },
+        ref: '1'
+      }));
+    };
+
+    ws.onmessage = (msg) => {
+      try{
+        const d = JSON.parse(msg.data);
+        // Heartbeat reply karo
+        if(d.event === 'heartbeat'){
+          ws.send(JSON.stringify({ topic: 'phoenix', event: 'heartbeat', payload: {}, ref: d.ref }));
+          return;
+        }
+        // DB change aaya — reload data
+        if(d.event === 'postgres_changes' || (d.payload && d.payload.data && d.payload.data.type)){
+          loadFromSupabase();
+        }
+      } catch(err){}
+    };
+
+    ws.onclose = () => {
+      // Auto-reconnect after 3 seconds
+      setTimeout(connect, 3000);
+    };
+
+    ws.onerror = () => {
+      ws.close();
+    };
+  }
+
+  connect();
 }
 
 // =============================================
@@ -1568,20 +1602,11 @@ window.addEventListener('scroll',()=>{
 // =============================================
 document.addEventListener('DOMContentLoaded',()=>{
   if(!S.leads) S.leads=[];
-  // Pehle default data render karo (fast load)
-  renderAll();
+  renderAll(); // pehle default dikhao (fast)
   checkHash();
   window.addEventListener('hashchange',checkHash);
   document.getElementById('cert-input').addEventListener('keydown',e=>{if(e.key==='Enter')verifyCert();});
-  // Firebase URL check
-  if(FIREBASE_DB_URL.includes('YOUR-PROJECT-ID')){
-    document.getElementById('firebase-setup-banner').style.display='block';
-    document.getElementById('navbar').style.top='72px';
-    document.getElementById('hero').style.paddingTop='192px';
-  } else {
-    // Phir Firebase se latest data load karo (cloud sync)
-    loadFromFirebase();
-  }
+  loadFromSupabase(); // phir Supabase se live data lo
 });
 
 // Expose globals
