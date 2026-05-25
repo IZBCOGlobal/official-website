@@ -1,4 +1,4 @@
-v<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -302,6 +302,31 @@ body.admin-mode .add-card-placeholder{display:flex!important}
 body.admin-mode .ae:hover::after{content:'✏ Double-click to edit';position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:rgba(201,169,110,.95);color:#080810;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:9999}
 body.admin-mode .ae{position:relative}
 
+/* BIG PLACEMENT STATS */
+.big-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.big-stat-card{position:relative;background:linear-gradient(135deg,rgba(13,13,26,.95),rgba(18,18,42,.95));border:1px solid rgba(201,169,110,.2);border-radius:24px;padding:44px 24px 36px;text-align:center;overflow:hidden;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.big-stat-card:hover{transform:translateY(-8px);border-color:rgba(201,169,110,.5);box-shadow:0 32px 80px rgba(0,0,0,.5),0 0 60px rgba(201,169,110,.08)}
+.big-stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,169,110,.06) 0%,transparent 60%);pointer-events:none}
+.big-stat-glow{position:absolute;width:180px;height:180px;background:radial-gradient(circle,rgba(201,169,110,.15),transparent 70%);top:-40px;left:50%;transform:translateX(-50%);border-radius:50%;pointer-events:none}
+.big-stat-icon{font-size:36px;margin-bottom:20px;display:block;filter:drop-shadow(0 0 12px rgba(201,169,110,.4))}
+.big-stat-num{font-family:'Playfair Display',serif;font-size:clamp(52px,7vw,96px);font-weight:900;color:var(--gold);line-height:1;letter-spacing:-2px;background:linear-gradient(135deg,var(--gold),var(--gold2,#E8C98A));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.big-stat-div{width:48px;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px auto 16px;border-radius:2px}
+.big-stat-lbl{font-size:clamp(12px,1.5vw,15px);color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-weight:600;line-height:1.4}
+
+@media(max-width:900px){
+  .big-stats-grid{grid-template-columns:repeat(2,1fr);gap:16px}
+  .big-stat-card{padding:32px 18px 28px}
+  .big-stat-num{font-size:clamp(44px,12vw,72px)}
+}
+@media(max-width:480px){
+  .big-stats-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .big-stat-card{padding:24px 14px 22px;border-radius:18px}
+  .big-stat-num{font-size:clamp(36px,11vw,56px)}
+  .big-stat-icon{font-size:28px;margin-bottom:14px}
+  .big-stat-div{margin:12px auto 10px}
+  .big-stat-lbl{font-size:11px;letter-spacing:1px}
+}
+
 /* RESPONSIVE */
 @media(max-width:900px){
   .hero-content{grid-template-columns:1fr}
@@ -372,6 +397,46 @@ body.admin-mode .ae{position:relative}
 <div id="trustbar">
   <div class="tb-inner" id="trustbar-inner"></div>
 </div>
+
+<!-- PLACEMENT STATS — BIG BANNER -->
+<section id="placement-stats-section" style="padding:70px 5%;background:var(--dark)">
+  <div class="max-w">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="section-tag" style="margin-bottom:14px">Our Track Record</div>
+      <h2 class="section-h2" style="margin-bottom:0">Numbers That <em>Speak</em></h2>
+    </div>
+    <div class="big-stats-grid">
+      <div class="big-stat-card">
+        <div class="big-stat-glow"></div>
+        <div class="big-stat-icon">🎯</div>
+        <div class="big-stat-num ae" id="edit-pb1-num">98%</div>
+        <div class="big-stat-div"></div>
+        <div class="big-stat-lbl ae" id="edit-pb1-lbl">Placement Rate</div>
+      </div>
+      <div class="big-stat-card">
+        <div class="big-stat-glow"></div>
+        <div class="big-stat-icon">💰</div>
+        <div class="big-stat-num ae" id="edit-pb2-num">3.2x</div>
+        <div class="big-stat-div"></div>
+        <div class="big-stat-lbl ae" id="edit-pb2-lbl">Average Salary Hike</div>
+      </div>
+      <div class="big-stat-card">
+        <div class="big-stat-glow"></div>
+        <div class="big-stat-icon">🏢</div>
+        <div class="big-stat-num ae" id="edit-pb3-num">500+</div>
+        <div class="big-stat-div"></div>
+        <div class="big-stat-lbl ae" id="edit-pb3-lbl">Hiring Partners</div>
+      </div>
+      <div class="big-stat-card">
+        <div class="big-stat-glow"></div>
+        <div class="big-stat-icon">⚡</div>
+        <div class="big-stat-num ae" id="edit-pb4-num">90 Days</div>
+        <div class="big-stat-div"></div>
+        <div class="big-stat-lbl ae" id="edit-pb4-lbl">Avg Time to Hire</div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- COURSES -->
 <section id="courses">
@@ -469,14 +534,6 @@ body.admin-mode .ae{position:relative}
     <h2 class="section-h2">Real <em>Success</em> Stories</h2>
     <p class="section-p ae" id="edit-testi-p">Our graduates are making an impact across industries and continents.</p>
     <div class="testimonials-grid" id="testi-grid"></div>
-    <div class="placement-banner">
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">
-        <div><div class="pb-num ae" id="edit-pb1-num">98%</div><div class="pb-label ae" id="edit-pb1-lbl">Placement Rate</div></div>
-        <div><div class="pb-num ae" id="edit-pb2-num">3.2x</div><div class="pb-label ae" id="edit-pb2-lbl">Average Salary Hike</div></div>
-        <div><div class="pb-num ae" id="edit-pb3-num">500+</div><div class="pb-label ae" id="edit-pb3-lbl">Hiring Partners</div></div>
-        <div><div class="pb-num ae" id="edit-pb4-num">90 Days</div><div class="pb-label ae" id="edit-pb4-lbl">Avg Time to Hire</div></div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -850,6 +907,9 @@ async function loadFromSupabase(){
         applyColorsFromState();
         applyAnnouncement();
         applyCountdown();
+        // Reset animation flags so counter re-runs with new values
+        document.querySelectorAll('.big-stat-num').forEach(el=>delete el.dataset.animated);
+        initBigStatsAnimation();
       }
     } else {
       // Supabase mein empty data hai — pehli baar load, defaults save karo
@@ -1643,6 +1703,59 @@ function openPlacementModal(){
 }
 
 // =============================================
+// COUNTER ANIMATION FOR BIG STATS
+// =============================================
+function animateCounter(el, target, duration){
+  if(!el||el.dataset.animated) return;
+  el.dataset.animated='1';
+  const suffix = target.replace(/^[\d.]+/,'');
+  const num = parseFloat(target.replace(/[^0-9.]/g,''));
+  if(isNaN(num)||num===0){
+    // Apply gradient text after setting content
+    applyGradientToNum(el);
+    return;
+  }
+  const start=Date.now();
+  const tick=()=>{
+    const p=Math.min((Date.now()-start)/duration,1);
+    const ease=1-Math.pow(1-p,3);
+    const cur=num*ease;
+    const display=(num<10?cur.toFixed(1):Math.round(cur).toLocaleString('en'))+suffix;
+    el.textContent=display;
+    if(p<1)requestAnimationFrame(tick);
+    else{el.textContent=target;applyGradientToNum(el);}
+  };
+  requestAnimationFrame(tick);
+}
+
+function applyGradientToNum(el){
+  // Re-apply gradient after textContent change
+  el.style.backgroundImage='linear-gradient(135deg,var(--gold),#E8C98A)';
+  el.style.webkitBackgroundClip='text';
+  el.style.webkitTextFillColor='transparent';
+  el.style.backgroundClip='text';
+}
+
+function initBigStatsAnimation(){
+  const cards=document.querySelectorAll('.big-stat-num');
+  if(!cards.length)return;
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const el=entry.target;
+        if(el.dataset.animated)return;
+        const val=el.textContent.trim();
+        el.style.webkitTextFillColor='var(--gold)';
+        el.style.backgroundImage='none';
+        setTimeout(()=>animateCounter(el,val,1800),150);
+        observer.unobserve(el);
+      }
+    });
+  },{threshold:0.3});
+  cards.forEach(el=>observer.observe(el));
+}
+
+// =============================================
 // NEW ADMIN FEATURES (50+)
 // =============================================
 
@@ -2333,6 +2446,7 @@ window.addEventListener('scroll',()=>{
 document.addEventListener('DOMContentLoaded',()=>{
   if(!S.leads) S.leads=[];
   renderAll(); // pehle default dikhao (fast)
+  initBigStatsAnimation();
   applyAnnouncement();
   applyCountdown();
   checkHash();
