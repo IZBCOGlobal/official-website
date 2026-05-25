@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+v<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -450,24 +450,7 @@ body.admin-mode .ae{position:relative}
 
 
 
-<!-- VERIFY CERTIFICATE -->
-<section id="verify">
-  <div class="max-w">
-    <div class="verify-wrap">
-      <div class="section-tag ae" id="edit-verify-tag">Certificate Verification</div>
-      <h2 class="section-h2">Verify Your <em>Certificate</em></h2>
-      <p class="section-p ae" id="edit-verify-p" style="margin:0 auto">Verify the authenticity of any certificate issued by our institution.</p>
-      <div class="verify-card">
-        <div class="verify-input-wrap">
-          <input class="verify-input" id="cert-input" placeholder="Enter Certificate ID (e.g. NGA-2024-0001)">
-          <span class="verify-icon">🔍</span>
-        </div>
-        <button class="verify-btn" onclick="verifyCert()">🔐 Verify Certificate</button>
-        <div id="verify-result"></div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- VERIFY SECTION REMOVED -->
 
 <!-- ACCREDITATIONS -->
 <section id="accreditations">
@@ -554,33 +537,78 @@ body.admin-mode .ae{position:relative}
 <!-- ADMIN PANEL (hidden) -->
 <div id="admin-panel" class="hidden">
   <div class="ap-card">
-    <div class="ap-indicator"><div class="ap-dot"></div><div class="ap-title">Admin Mode Active</div></div>
-    <div class="ap-hint">Tap any highlighted element to edit</div>
-    <div class="ap-section">Content</div>
+    <div class="ap-indicator"><div class="ap-dot"></div><div class="ap-title">⚡ Admin Control Center</div></div>
+    <div class="ap-hint">Dbl-click any highlighted element to edit inline</div>
+
+    <div class="ap-section">📦 Content Management</div>
     <div class="ap-actions">
-      <div class="ap-btn ap-btn-gold" onclick="openAddCourseModal()">+ Add New Course</div>
-      <div class="ap-btn ap-btn-gold" onclick="openAddTestiModal()">+ Add Testimonial</div>
-      <div class="ap-btn ap-btn-gold" onclick="openAddTrustRowModal()">+ Add Trust Point</div>
+      <div class="ap-btn ap-btn-gold" onclick="openAddCourseModal()">➕ Add New Course</div>
+      <div class="ap-btn ap-btn-gold" onclick="openEditCoursesListModal()">✏️ Edit Existing Courses</div>
+      <div class="ap-btn ap-btn-gold" onclick="openAddTestiModal()">💬 Add Testimonial</div>
+      <div class="ap-btn ap-btn-gold" onclick="openEditTestimonialsModal()">✏️ Edit Testimonials</div>
+      <div class="ap-btn ap-btn-gold" onclick="openAddAccredModal()">🏅 Add Accreditation</div>
+      <div class="ap-btn ap-btn-gold" onclick="openAddTrustRowModal()">✅ Add Trust Point</div>
+      <div class="ap-btn ap-btn-gold" onclick="openAddCertModal()">📜 Add Certificate</div>
+      <div class="ap-btn ap-btn-gold" onclick="openManageCertsModal()">🗂 Manage Certificates</div>
     </div>
-    <div class="ap-section">Leads & Enquiries</div>
+
+    <div class="ap-section">📋 Leads & CRM</div>
     <div class="ap-actions">
       <div class="ap-btn ap-btn-green" onclick="openLeadsModal()" id="leads-btn">📋 View All Leads <span class="ap-badge" id="leads-count">0</span></div>
-      <div class="ap-btn ap-btn-green" onclick="exportLeads()">⬇ Export CSV</div>
+      <div class="ap-btn ap-btn-green" onclick="exportLeads()">⬇️ Export CSV</div>
+      <div class="ap-btn ap-btn-green" onclick="openLeadStatsModal()">📊 Lead Analytics</div>
+      <div class="ap-btn ap-btn-green" onclick="clearLeads()">🗑 Clear All Leads</div>
     </div>
-    <div class="ap-section">Edit Site</div>
+
+    <div class="ap-section">🎨 Design & Branding</div>
+    <div class="ap-actions">
+      <div class="ap-btn ap-btn-gold" onclick="openColorsModal()">🎨 Brand Colors & Themes</div>
+      <div class="ap-btn ap-btn-gold" onclick="openFontsModal()">🔤 Font Style</div>
+      <div class="ap-btn ap-btn-gold" onclick="openBgModal()">🌌 Background Effect</div>
+      <div class="ap-btn ap-btn-gold" onclick="openButtonStyleModal()">🔘 Button Style</div>
+      <div class="ap-btn ap-btn-gold" onclick="openLogoModal()">🖼 Logo & Favicon</div>
+    </div>
+
+    <div class="ap-section">✏️ Page Sections</div>
     <div class="ap-actions">
       <div class="ap-btn ap-btn-gold" onclick="openSiteInfoModal()">🏫 Site Name & Logo</div>
       <div class="ap-btn ap-btn-gold" onclick="openHeroModal()">🦸 Hero Section</div>
-      <div class="ap-btn ap-btn-gold" onclick="openStatsModal()">📊 Stats Numbers</div>
+      <div class="ap-btn ap-btn-gold" onclick="openStatsModal()">📊 Hero Stats</div>
+      <div class="ap-btn ap-btn-gold" onclick="openNavModal()">🧭 Navigation Links</div>
+      <div class="ap-btn ap-btn-gold" onclick="openTrustBarModal()">🏷 Trust Bar Items</div>
+      <div class="ap-btn ap-btn-gold" onclick="openCourseSectionModal()">🎓 Courses Section Header</div>
+      <div class="ap-btn ap-btn-gold" onclick="openEnrollFormModal()">📝 Enroll Form Text</div>
+      <div class="ap-btn ap-btn-gold" onclick="openAccredSectionModal()">🏅 Accreditations Header</div>
+      <div class="ap-btn ap-btn-gold" onclick="openPlacementModal()">📈 Placement Stats Banner</div>
       <div class="ap-btn ap-btn-gold" onclick="openFooterModal()">🔗 Footer Info</div>
-      <div class="ap-btn ap-btn-gold" onclick="openColorsModal()">🎨 Brand Colors</div>
+      <div class="ap-btn ap-btn-gold" onclick="openSeoModal()">🔍 SEO & Meta Tags</div>
+      <div class="ap-btn ap-btn-gold" onclick="openAnnouncementModal()">📢 Announcement Banner</div>
     </div>
-    <div class="ap-section">Settings</div>
+
+    <div class="ap-section">💬 Communication</div>
     <div class="ap-actions">
       <div class="ap-btn ap-btn-gold" onclick="openWhatsAppSettingsModal()">📱 WhatsApp Settings</div>
-      <div class="ap-btn ap-btn-green" onclick="openPlacementModal()">📈 Placement Stats</div>
+      <div class="ap-btn ap-btn-gold" onclick="openPopupModal()">🪟 Popup / Offer</div>
+      <div class="ap-btn ap-btn-gold" onclick="openCountdownModal()">⏱ Countdown Timer</div>
+      <div class="ap-btn ap-btn-gold" onclick="openChatBubbleModal()">💭 Chat Bubble Text</div>
+    </div>
+
+    <div class="ap-section">⚙️ Advanced Settings</div>
+    <div class="ap-actions">
+      <div class="ap-btn ap-btn-gold" onclick="openPasswordModal()">🔐 Change Admin Password</div>
+      <div class="ap-btn ap-btn-gold" onclick="openSupabaseModal()">🗄 Supabase Config</div>
+      <div class="ap-btn ap-btn-gold" onclick="openCustomCSSModal()">💻 Custom CSS</div>
+      <div class="ap-btn ap-btn-gold" onclick="openCustomJSModal()">⚡ Custom Script</div>
+      <div class="ap-btn ap-btn-gold" onclick="openCurrencyModal()">💰 Currency & Pricing</div>
+      <div class="ap-btn ap-btn-gold" onclick="openVisibilityModal()">👁 Section Visibility</div>
+      <div class="ap-btn ap-btn-gold" onclick="exportSiteData()">📤 Export Site Data</div>
+      <div class="ap-btn ap-btn-gold" onclick="importSiteData()">📥 Import Site Data</div>
+    </div>
+
+    <div class="ap-section">🚨 Danger Zone</div>
+    <div class="ap-actions">
       <div class="ap-btn ap-btn-red" onclick="if(confirm('Exit admin mode?'))deactivateAdmin()">🚪 Exit Admin</div>
-      <div class="ap-btn ap-btn-red" onclick="resetAll()">⚠ Reset All Data</div>
+      <div class="ap-btn ap-btn-red" onclick="resetAll()">⚠️ Reset All Data</div>
     </div>
   </div>
 </div>
@@ -819,11 +847,15 @@ async function loadFromSupabase(){
         _lastDataHash = newHash;
         S = mergeWithDefaults(rows[0].data);
         renderAll();
+        applyColorsFromState();
+        applyAnnouncement();
+        applyCountdown();
       }
     } else {
       // Supabase mein empty data hai — pehli baar load, defaults save karo
       _lastDataHash = JSON.stringify(S);
       renderAll();
+      applyColorsFromState();
       // Save defaults to Supabase
       await saveState();
     }
@@ -1013,6 +1045,7 @@ function submitAdmission(){
 // RENDER
 // =============================================
 function renderAll(){
+  applyColorsFromState();
   renderSettings();
   renderTrustRows();
   renderTrustBar();
@@ -1502,22 +1535,83 @@ function openFooterModal(){
   );
 }
 
+function applyColorsFromState(){
+  const ss=S.siteSettings;
+  if(ss.colorGold){document.documentElement.style.setProperty('--gold',ss.colorGold);}
+  if(ss.colorGold2){document.documentElement.style.setProperty('--gold2',ss.colorGold2);}
+  if(ss.colorAccent){document.documentElement.style.setProperty('--accent',ss.colorAccent);}
+  if(ss.colorAccent2){document.documentElement.style.setProperty('--accent2',ss.colorAccent2);}
+  if(ss.colorDark){document.documentElement.style.setProperty('--dark',ss.colorDark);}
+  if(ss.colorText){document.documentElement.style.setProperty('--text',ss.colorText);}
+  if(ss.colorGreen){document.documentElement.style.setProperty('--green',ss.colorGreen);}
+  if(ss.colorRed){document.documentElement.style.setProperty('--red',ss.colorRed);}
+}
+
 function openColorsModal(){
-  openModal('🎨 Brand Colors',`
-    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Change primary gold color of the site</p>
+  const ss=S.siteSettings;
+  openModal('🎨 Brand Colors — Live Preview',`
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Changes apply <strong style="color:var(--gold)">instantly</strong> and are saved permanently.</p>
     <div class="modal-grid">
-      <div class="modal-field"><label>Primary Gold Color</label><input id="cl-gold" type="color" value="#C9A96E"></div>
-      <div class="modal-field"><label>Accent Purple Color</label><input id="cl-accent" type="color" value="#5B4FE9"></div>
+      <div class="modal-field"><label>Primary Gold Color</label><input id="cl-gold" type="color" value="${ss.colorGold||'#C9A96E'}"></div>
+      <div class="modal-field"><label>Gold Highlight</label><input id="cl-gold2" type="color" value="${ss.colorGold2||'#E8C98A'}"></div>
+    </div>
+    <div class="modal-grid">
+      <div class="modal-field"><label>Accent Purple</label><input id="cl-accent" type="color" value="${ss.colorAccent||'#5B4FE9'}"></div>
+      <div class="modal-field"><label>Accent Light Purple</label><input id="cl-accent2" type="color" value="${ss.colorAccent2||'#8B7FF5'}"></div>
+    </div>
+    <div class="modal-grid">
+      <div class="modal-field"><label>Background Dark</label><input id="cl-dark" type="color" value="${ss.colorDark||'#080810'}"></div>
+      <div class="modal-field"><label>Text Color</label><input id="cl-text" type="color" value="${ss.colorText||'#E8E8F0'}"></div>
+    </div>
+    <div class="modal-grid">
+      <div class="modal-field"><label>Success / Green</label><input id="cl-green" type="color" value="${ss.colorGreen||'#22C55E'}"></div>
+      <div class="modal-field"><label>Danger / Red</label><input id="cl-red" type="color" value="${ss.colorRed||'#EF4444'}"></div>
+    </div>
+    <div style="margin-top:12px;padding:14px;background:var(--glass);border-radius:10px;border:1px solid var(--border)">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px">Quick Theme Presets</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="applyPreset('gold')" style="padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,#C9A96E,#E8C98A);color:#080810;font-weight:700;font-size:11px;border:none;cursor:pointer">✨ Gold Classic</button>
+        <button onclick="applyPreset('blue')" style="padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#60A5FA);color:white;font-weight:700;font-size:11px;border:none;cursor:pointer">💙 Royal Blue</button>
+        <button onclick="applyPreset('green')" style="padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,#10B981,#34D399);color:white;font-weight:700;font-size:11px;border:none;cursor:pointer">💚 Emerald</button>
+        <button onclick="applyPreset('red')" style="padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,#EF4444,#F87171);color:white;font-weight:700;font-size:11px;border:none;cursor:pointer">❤ Crimson</button>
+        <button onclick="applyPreset('purple')" style="padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,#8B5CF6,#A78BFA);color:white;font-weight:700;font-size:11px;border:none;cursor:pointer">💜 Violet</button>
+      </div>
     </div>`,
     ()=>{
-      const gold=document.getElementById('cl-gold').value;
-      const accent=document.getElementById('cl-accent').value;
-      document.documentElement.style.setProperty('--gold',gold);
-      document.documentElement.style.setProperty('--accent',accent);
-      showToast('✅ Colors Updated! (refreshes on reload)');
+      ss.colorGold=document.getElementById('cl-gold').value;
+      ss.colorGold2=document.getElementById('cl-gold2').value;
+      ss.colorAccent=document.getElementById('cl-accent').value;
+      ss.colorAccent2=document.getElementById('cl-accent2').value;
+      ss.colorDark=document.getElementById('cl-dark').value;
+      ss.colorText=document.getElementById('cl-text').value;
+      ss.colorGreen=document.getElementById('cl-green').value;
+      ss.colorRed=document.getElementById('cl-red').value;
+      applyColorsFromState();
+      saveState();
+      showToast('✅ Colors Saved & Applied!');
     }
   );
 }
+
+function applyPreset(p){
+  const presets={
+    gold:{colorGold:'#C9A96E',colorGold2:'#E8C98A',colorAccent:'#5B4FE9',colorAccent2:'#8B7FF5'},
+    blue:{colorGold:'#3B82F6',colorGold2:'#60A5FA',colorAccent:'#1D4ED8',colorAccent2:'#93C5FD'},
+    green:{colorGold:'#10B981',colorGold2:'#34D399',colorAccent:'#059669',colorAccent2:'#6EE7B7'},
+    red:{colorGold:'#EF4444',colorGold2:'#F87171',colorAccent:'#DC2626',colorAccent2:'#FCA5A5'},
+    purple:{colorGold:'#8B5CF6',colorGold2:'#A78BFA',colorAccent:'#7C3AED',colorAccent2:'#C4B5FD'},
+  };
+  const pr=presets[p];if(!pr)return;
+  const ss=S.siteSettings;
+  Object.assign(ss,pr);
+  applyColorsFromState();
+  document.getElementById('cl-gold').value=ss.colorGold;
+  document.getElementById('cl-gold2').value=ss.colorGold2;
+  document.getElementById('cl-accent').value=ss.colorAccent;
+  document.getElementById('cl-accent2').value=ss.colorAccent2;
+  showToast('✅ Preset Applied! Click Save to keep it.');
+}
+window.applyPreset=applyPreset;
 
 function openPlacementModal(){
   const ss=S.siteSettings;
@@ -1549,8 +1643,621 @@ function openPlacementModal(){
 }
 
 // =============================================
-// MAIN FORM SUBMIT
+// NEW ADMIN FEATURES (50+)
 // =============================================
+
+// --- EDIT EXISTING COURSES ---
+function openEditCoursesListModal(){
+  const list = S.courses.map((c,i)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">
+      <div><div style="font-size:13px;font-weight:600;color:var(--text)">${c.title}</div><div style="font-size:11px;color:var(--muted)">${c.price} · ${c.duration}</div></div>
+      <button onclick="openEditCourseModal('${c.id}')" style="padding:6px 12px;background:rgba(201,169,110,.15);border:1px solid rgba(201,169,110,.3);color:var(--gold);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Edit</button>
+    </div>`).join('');
+  openModal('✏️ Edit Existing Courses',`<div style="max-height:400px;overflow-y:auto">${list||'<p style="color:var(--muted);font-size:13px">No courses yet.</p>'}</div>`,()=>{});
+}
+
+function openEditCourseModal(id){
+  const c=S.courses.find(x=>x.id===id);if(!c)return;
+  closeModal();
+  openModal('✏️ Edit Course',`
+    <div class="modal-field"><label>Badge / Category</label><input id="ec-badge" type="text" value="${c.badge||''}"></div>
+    <div class="modal-field"><label>Course Title</label><input id="ec-title" type="text" value="${c.title||''}"></div>
+    <div class="modal-field"><label>Description</label><textarea id="ec-desc">${c.desc||''}</textarea></div>
+    <div class="modal-grid">
+      <div class="modal-field"><label>Price</label><input id="ec-price" type="text" value="${c.price||''}"></div>
+      <div class="modal-field"><label>Original Price</label><input id="ec-oprice" type="text" value="${c.origPrice||''}"></div>
+    </div>
+    <div class="modal-grid">
+      <div class="modal-field"><label>Duration</label><input id="ec-dur" type="text" value="${c.duration||''}"></div>
+      <div class="modal-field"><label>Mode</label><input id="ec-mode" type="text" value="${c.mode||''}"></div>
+    </div>
+    <div class="modal-field"><label>Seats</label><input id="ec-seats" type="text" value="${c.seats||''}"></div>`,
+    ()=>{
+      c.badge=document.getElementById('ec-badge').value||c.badge;
+      c.title=document.getElementById('ec-title').value||c.title;
+      c.desc=document.getElementById('ec-desc').value||c.desc;
+      c.price=document.getElementById('ec-price').value||c.price;
+      c.origPrice=document.getElementById('ec-oprice').value||c.origPrice;
+      c.duration=document.getElementById('ec-dur').value||c.duration;
+      c.mode=document.getElementById('ec-mode').value||c.mode;
+      c.seats=document.getElementById('ec-seats').value||c.seats;
+      saveState();renderCourses();populateCourseDropdown();showToast('✅ Course Updated!');
+    }
+  );
+}
+window.openEditCourseModal=openEditCourseModal;
+
+// --- EDIT TESTIMONIALS ---
+function openEditTestimonialsModal(){
+  const list=S.testimonials.map((t,i)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">
+      <div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.name}</div><div style="font-size:11px;color:var(--muted)">${t.role}</div></div>
+      <button onclick="openEditTestiModal(${i})" style="padding:6px 12px;background:rgba(201,169,110,.15);border:1px solid rgba(201,169,110,.3);color:var(--gold);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Edit</button>
+    </div>`).join('');
+  openModal('✏️ Edit Testimonials',`<div style="max-height:400px;overflow-y:auto">${list||'<p style="color:var(--muted);font-size:13px">No testimonials.</p>'}</div>`,()=>{});
+}
+
+function openEditTestiModal(i){
+  const t=S.testimonials[i];if(!t)return;
+  closeModal();
+  openModal('✏️ Edit Testimonial',`
+    <div class="modal-field"><label>Testimonial Text</label><textarea id="et-text">${t.text||''}</textarea></div>
+    <div class="modal-grid">
+      <div class="modal-field"><label>Full Name</label><input id="et-name" type="text" value="${t.name||''}"></div>
+      <div class="modal-field"><label>Initials</label><input id="et-avatar" maxlength="2" type="text" value="${t.avatar||''}"></div>
+    </div>
+    <div class="modal-grid">
+      <div class="modal-field"><label>Role</label><input id="et-role" type="text" value="${t.role||''}"></div>
+      <div class="modal-field"><label>Country</label><input id="et-country" type="text" value="${t.country||''}"></div>
+    </div>`,
+    ()=>{
+      t.text=document.getElementById('et-text').value;
+      t.name=document.getElementById('et-name').value;
+      t.avatar=document.getElementById('et-avatar').value;
+      t.role=document.getElementById('et-role').value;
+      t.country=document.getElementById('et-country').value;
+      saveState();renderTestimonials();showToast('✅ Testimonial Updated!');
+    }
+  );
+}
+window.openEditTestiModal=openEditTestiModal;
+
+// --- MANAGE CERTIFICATES ---
+function openManageCertsModal(){
+  const certs=S.certificates||{};
+  const keys=Object.keys(certs);
+  const list=keys.length?keys.map(k=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">
+      <div><div style="font-size:13px;font-weight:700;color:var(--gold);font-family:'JetBrains Mono',monospace">${k}</div>
+      <div style="font-size:11px;color:var(--muted)">${certs[k].name} · ${certs[k].program}</div></div>
+      <button onclick="deleteCert('${k}')" style="padding:5px 10px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red);border-radius:8px;font-size:11px;cursor:pointer">Delete</button>
+    </div>`).join(''):'<p style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No certificates in registry.</p>';
+  openModal('🗂 Certificate Registry',`<div style="max-height:400px;overflow-y:auto">${list}</div><div style="margin-top:12px"><button onclick="openAddCertModal()" class="ap-btn ap-btn-gold" style="width:100%">➕ Add New Certificate</button></div>`,()=>{});
+}
+
+function deleteCert(id){
+  if(!confirm('Delete certificate '+id+'?'))return;
+  delete S.certificates[id];
+  saveState();showToast('🗑 Certificate Deleted');closeModal();openManageCertsModal();
+}
+window.deleteCert=deleteCert;
+
+// --- LEAD ANALYTICS ---
+function openLeadStatsModal(){
+  const leads=S.leads||[];
+  const total=leads.length;
+  const today=new Date().toDateString();
+  const todayCount=leads.filter(l=>new Date(l.time).toDateString()===today).length;
+  const byCourse={};
+  leads.forEach(l=>{const k=l.course||'Not specified';byCourse[k]=(byCourse[k]||0)+1;});
+  const courseRows=Object.entries(byCourse).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>`
+    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <span style="color:var(--text)">${k}</span><span style="color:var(--gold);font-weight:700">${v}</span>
+    </div>`).join('');
+  openModal('📊 Lead Analytics',`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center">
+        <div style="font-size:32px;font-weight:900;color:var(--gold);font-family:'Playfair Display',serif">${total}</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Total Leads</div>
+      </div>
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center">
+        <div style="font-size:32px;font-weight:900;color:var(--green);font-family:'Playfair Display',serif">${todayCount}</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Today</div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">By Course</div>
+    ${courseRows||'<p style="color:var(--muted);font-size:12px">No data yet</p>'}`,
+    ()=>{}
+  );
+}
+
+function clearLeads(){
+  if(!confirm('Delete ALL leads? This cannot be undone!'))return;
+  S.leads=[];saveState();updateLeadsBadge();showToast('🗑 All leads cleared');
+}
+
+// --- NAV MODAL ---
+function openNavModal(){
+  const ss=S.siteSettings;
+  openModal('🧭 Navigation Links',`
+    <div class="modal-field"><label>Link 1 Label</label><input id="nav-l1" type="text" value="${ss.navL1||'Programs'}"></div>
+    <div class="modal-field"><label>Link 1 Href</label><input id="nav-h1" type="text" value="${ss.navH1||'#courses'}"></div>
+    <div class="modal-field"><label>Link 2 Label</label><input id="nav-l2" type="text" value="${ss.navL2||'Enroll'}"></div>
+    <div class="modal-field"><label>Link 2 Href</label><input id="nav-h2" type="text" value="${ss.navH2||'#enroll'}"></div>
+    <div class="modal-field"><label>Link 3 Label</label><input id="nav-l3" type="text" value="${ss.navL3||'Outcomes'}"></div>
+    <div class="modal-field"><label>Link 3 Href</label><input id="nav-h3" type="text" value="${ss.navH3||'#testimonials'}"></div>`,
+    ()=>{
+      ss.navL1=document.getElementById('nav-l1').value;ss.navH1=document.getElementById('nav-h1').value;
+      ss.navL2=document.getElementById('nav-l2').value;ss.navH2=document.getElementById('nav-h2').value;
+      ss.navL3=document.getElementById('nav-l3').value;ss.navH3=document.getElementById('nav-h3').value;
+      // update nav links live
+      const links=document.querySelectorAll('.nav-links a');
+      if(links[0]){links[0].textContent=ss.navL1;links[0].href=ss.navH1;}
+      if(links[1]){links[1].textContent=ss.navL2;links[1].href=ss.navH2;}
+      if(links[2]){links[2].textContent=ss.navL3;links[2].href=ss.navH3;}
+      saveState();showToast('✅ Nav Links Updated!');
+    }
+  );
+}
+
+// --- TRUST BAR MODAL ---
+function openTrustBarModal(){
+  const items=S.trustBar||[];
+  const fields=items.map((t,i)=>`
+    <div class="modal-grid">
+      <div class="modal-field"><label>Icon ${i+1}</label><input id="tb-icon-${i}" type="text" value="${t.icon||''}"></div>
+      <div class="modal-field"><label>Label ${i+1}</label><input id="tb-lbl-${i}" type="text" value="${t.label||''}"></div>
+    </div>`).join('');
+  openModal('🏷 Trust Bar Items',fields+'<p style="font-size:11px;color:var(--muted);margin-top:8px">Edit the trust bar items shown below the navbar.</p>',
+    ()=>{
+      items.forEach((t,i)=>{
+        t.icon=document.getElementById('tb-icon-'+i).value;
+        t.label=document.getElementById('tb-lbl-'+i).value;
+      });
+      saveState();renderTrustBar();showToast('✅ Trust Bar Updated!');
+    }
+  );
+}
+
+// --- COURSES SECTION HEADER ---
+function openCourseSectionModal(){
+  const ss=S.siteSettings;
+  openModal('🎓 Courses Section',`
+    <div class="modal-field"><label>Section Tag</label><input id="cs-tag" type="text" value="${ss.coursesTag||''}"></div>
+    <div class="modal-field"><label>Section Description</label><textarea id="cs-desc">${ss.coursesDesc||''}</textarea></div>`,
+    ()=>{
+      ss.coursesTag=document.getElementById('cs-tag').value;
+      ss.coursesDesc=document.getElementById('cs-desc').value;
+      saveState();renderSettings();showToast('✅ Courses Section Updated!');
+    }
+  );
+}
+
+// --- ENROLL FORM TEXT ---
+function openEnrollFormModal(){
+  const ss=S.siteSettings;
+  openModal('📝 Enroll Form Text',`
+    <div class="modal-field"><label>Section Tag</label><input id="ef-tag" type="text" value="${ss.formTag||''}"></div>
+    <div class="modal-field"><label>Form Heading</label><input id="ef-h3" type="text" value="${ss.formH3||''}"></div>
+    <div class="modal-field"><label>Form Sub-text</label><input id="ef-sub" type="text" value="${ss.formSub||''}"></div>
+    <div class="modal-field"><label>Submit Button Text</label><input id="ef-btn" type="text" value="${ss.formBtn||''}"></div>
+    <div class="modal-field"><label>Privacy Note</label><input id="ef-note" type="text" value="${ss.formNote||''}"></div>`,
+    ()=>{
+      ss.formTag=document.getElementById('ef-tag').value;
+      ss.formH3=document.getElementById('ef-h3').value;
+      ss.formSub=document.getElementById('ef-sub').value;
+      ss.formBtn=document.getElementById('ef-btn').value;
+      ss.formNote=document.getElementById('ef-note').value;
+      saveState();renderSettings();showToast('✅ Form Text Updated!');
+    }
+  );
+}
+
+// --- ACCREDITATIONS HEADER ---
+function openAccredSectionModal(){
+  const ss=S.siteSettings;
+  openModal('🏅 Accreditations Section',`
+    <div class="modal-field"><label>Section Tag</label><input id="ac-tag" type="text" value="${ss.accredTag||''}"></div>
+    <div class="modal-field"><label>Description</label><textarea id="ac-p">${ss.accredP||''}</textarea></div>`,
+    ()=>{
+      ss.accredTag=document.getElementById('ac-tag').value;
+      ss.accredP=document.getElementById('ac-p').value;
+      saveState();renderSettings();showToast('✅ Accreditations Section Updated!');
+    }
+  );
+}
+
+// --- SEO & META ---
+function openSeoModal(){
+  const ss=S.siteSettings;
+  openModal('🔍 SEO & Meta Tags',`
+    <div class="modal-field"><label>Page Title</label><input id="seo-title" type="text" value="${ss.seoTitle||ss.siteName||''}"></div>
+    <div class="modal-field"><label>Meta Description</label><textarea id="seo-desc">${ss.seoDesc||''}</textarea></div>
+    <div class="modal-field"><label>Meta Keywords</label><input id="seo-kw" type="text" value="${ss.seoKeywords||''}" placeholder="education, diploma, certification"></div>`,
+    ()=>{
+      ss.seoTitle=document.getElementById('seo-title').value;
+      ss.seoDesc=document.getElementById('seo-desc').value;
+      ss.seoKeywords=document.getElementById('seo-kw').value;
+      document.title=ss.seoTitle||ss.siteName;
+      let md=document.querySelector('meta[name="description"]');
+      if(!md){md=document.createElement('meta');md.name='description';document.head.appendChild(md);}
+      md.content=ss.seoDesc;
+      saveState();showToast('✅ SEO Settings Saved!');
+    }
+  );
+}
+
+// --- ANNOUNCEMENT BANNER ---
+function openAnnouncementModal(){
+  const ss=S.siteSettings;
+  openModal('📢 Announcement Banner',`
+    <div class="modal-field"><label>Banner Text</label><input id="ann-text" type="text" value="${ss.annText||''}" placeholder="🔥 Limited Time Offer — 30% OFF All Courses!"></div>
+    <div class="modal-grid">
+      <div class="modal-field"><label>Background Color</label><input id="ann-bg" type="color" value="${ss.annBg||'#C9A96E'}"></div>
+      <div class="modal-field"><label>Text Color</label><input id="ann-tc" type="color" value="${ss.annTc||'#080810'}"></div>
+    </div>
+    <div class="modal-field"><label>Show Banner?</label>
+      <select id="ann-show"><option value="1" ${ss.annShow?'selected':''}>Yes - Show</option><option value="0" ${!ss.annShow?'selected':''}>No - Hide</option></select>
+    </div>`,
+    ()=>{
+      ss.annText=document.getElementById('ann-text').value;
+      ss.annBg=document.getElementById('ann-bg').value;
+      ss.annTc=document.getElementById('ann-tc').value;
+      ss.annShow=document.getElementById('ann-show').value==='1';
+      saveState();applyAnnouncement();showToast('✅ Announcement Updated!');
+    }
+  );
+}
+
+function applyAnnouncement(){
+  const ss=S.siteSettings;
+  let bar=document.getElementById('ann-bar');
+  if(ss.annShow&&ss.annText){
+    if(!bar){bar=document.createElement('div');bar.id='ann-bar';bar.style.cssText='width:100%;text-align:center;padding:10px 20px;font-size:13px;font-weight:700;z-index:999;position:relative;';document.body.insertAdjacentElement('afterbegin',bar);}
+    bar.style.background=ss.annBg||'#C9A96E';
+    bar.style.color=ss.annTc||'#080810';
+    bar.textContent=ss.annText;
+  } else if(bar){bar.remove();}
+}
+
+// --- POPUP / OFFER ---
+function openPopupModal(){
+  const ss=S.siteSettings;
+  openModal('🪟 Popup / Offer Modal',`
+    <div class="modal-field"><label>Popup Heading</label><input id="pop-h" type="text" value="${ss.popupH||''}" placeholder="🔥 Special Offer!"></div>
+    <div class="modal-field"><label>Popup Text</label><textarea id="pop-t">${ss.popupT||''}</textarea></div>
+    <div class="modal-field"><label>Button Text</label><input id="pop-btn" type="text" value="${ss.popupBtn||''}" placeholder="Claim Offer →"></div>
+    <div class="modal-field"><label>Delay (seconds)</label><input id="pop-delay" type="number" value="${ss.popupDelay||10}" min="0" max="60"></div>
+    <div class="modal-field"><label>Show Popup?</label>
+      <select id="pop-show"><option value="1" ${ss.popupShow?'selected':''}>Yes</option><option value="0" ${!ss.popupShow?'selected':''}>No</option></select>
+    </div>`,
+    ()=>{
+      ss.popupH=document.getElementById('pop-h').value;
+      ss.popupT=document.getElementById('pop-t').value;
+      ss.popupBtn=document.getElementById('pop-btn').value;
+      ss.popupDelay=parseInt(document.getElementById('pop-delay').value)||10;
+      ss.popupShow=document.getElementById('pop-show').value==='1';
+      saveState();showToast('✅ Popup Settings Saved!');
+    }
+  );
+}
+
+// --- COUNTDOWN TIMER ---
+function openCountdownModal(){
+  const ss=S.siteSettings;
+  openModal('⏱ Countdown Timer',`
+    <div class="modal-field"><label>Target Date & Time</label><input id="cd-date" type="datetime-local" value="${ss.countdownDate||''}"></div>
+    <div class="modal-field"><label>Label Text</label><input id="cd-label" type="text" value="${ss.countdownLabel||''}" placeholder="Offer Ends In:"></div>
+    <div class="modal-field"><label>Show Timer?</label>
+      <select id="cd-show"><option value="1" ${ss.countdownShow?'selected':''}>Yes</option><option value="0" ${!ss.countdownShow?'selected':''}>No</option></select>
+    </div>`,
+    ()=>{
+      ss.countdownDate=document.getElementById('cd-date').value;
+      ss.countdownLabel=document.getElementById('cd-label').value;
+      ss.countdownShow=document.getElementById('cd-show').value==='1';
+      saveState();applyCountdown();showToast('✅ Countdown Saved!');
+    }
+  );
+}
+
+let countdownInterval=null;
+function applyCountdown(){
+  const ss=S.siteSettings;
+  let bar=document.getElementById('countdown-bar');
+  if(ss.countdownShow&&ss.countdownDate){
+    if(!bar){
+      bar=document.createElement('div');bar.id='countdown-bar';
+      bar.style.cssText='width:100%;text-align:center;padding:12px 20px;font-size:14px;font-weight:700;background:rgba(239,68,68,.15);border-bottom:1px solid rgba(239,68,68,.3);color:#EF4444;z-index:998;position:relative;';
+      const nav=document.getElementById('navbar');
+      if(nav)nav.insertAdjacentElement('afterend',bar);else document.body.insertAdjacentElement('afterbegin',bar);
+    }
+    if(countdownInterval)clearInterval(countdownInterval);
+    countdownInterval=setInterval(()=>{
+      const diff=new Date(ss.countdownDate)-new Date();
+      if(diff<=0){bar.textContent='⏰ Offer has ended!';clearInterval(countdownInterval);return;}
+      const d=Math.floor(diff/864e5),h=Math.floor((diff%864e5)/36e5),m=Math.floor((diff%36e5)/6e4),s=Math.floor((diff%6e4)/1e3);
+      bar.textContent=`${ss.countdownLabel||'Offer Ends:'} ${d}d ${h}h ${m}m ${s}s`;
+    },1000);
+  } else if(bar){bar.remove();if(countdownInterval)clearInterval(countdownInterval);}
+}
+
+// --- CHAT BUBBLE TEXT ---
+function openChatBubbleModal(){
+  const ss=S.siteSettings;
+  openModal('💭 WhatsApp Chat Bubble',`
+    <div class="modal-field"><label>Top Line Text</label><input id="cb-top" type="text" value="${ss.waBubbleTop||'Talk on WhatsApp'}"></div>
+    <div class="modal-field"><label>Bottom Line Text</label><input id="cb-bot" type="text" value="${ss.waBubbleBot||'Instant Admission Help'}"></div>`,
+    ()=>{
+      ss.waBubbleTop=document.getElementById('cb-top').value;
+      ss.waBubbleBot=document.getElementById('cb-bot').value;
+      const top=document.querySelector('.wa-text-top');const bot=document.querySelector('.wa-text-bot');
+      if(top)top.textContent=ss.waBubbleTop;if(bot)bot.textContent=ss.waBubbleBot;
+      saveState();showToast('✅ Chat Bubble Updated!');
+    }
+  );
+}
+
+// --- CHANGE ADMIN PASSWORD ---
+function openPasswordModal(){
+  openModal('🔐 Change Admin Password',`
+    <div class="modal-field"><label>Current Password</label><input id="pw-cur" type="password" placeholder="Current password"></div>
+    <div class="modal-field"><label>New Password</label><input id="pw-new" type="password" placeholder="New password"></div>
+    <div class="modal-field"><label>Confirm New Password</label><input id="pw-cnf" type="password" placeholder="Confirm password"></div>`,
+    ()=>{
+      const cur=document.getElementById('pw-cur').value;
+      const nw=document.getElementById('pw-new').value;
+      const cnf=document.getElementById('pw-cnf').value;
+      if(cur!==ADMIN_PASS){showToast('❌ Current password wrong!');return;}
+      if(!nw||nw.length<3){showToast('❌ New password too short!');return;}
+      if(nw!==cnf){showToast('❌ Passwords do not match!');return;}
+      S.siteSettings.adminPass=nw;
+      saveState();showToast('✅ Password Changed! Use new password next login.');
+    }
+  );
+}
+
+// --- SUPABASE CONFIG ---
+function openSupabaseModal(){
+  openModal('🗄 Supabase Configuration',`
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Update your Supabase project credentials. Changes require page reload.</p>
+    <div class="modal-field"><label>Supabase URL</label><input id="sb-url" type="text" value="${SUPABASE_URL}" placeholder="https://xxx.supabase.co"></div>
+    <div class="modal-field"><label>Supabase Anon Key</label><textarea id="sb-key" style="font-family:monospace;font-size:11px">${SUPABASE_KEY}</textarea></div>`,
+    ()=>{
+      S.siteSettings.supabaseUrl=document.getElementById('sb-url').value;
+      S.siteSettings.supabaseKey=document.getElementById('sb-key').value;
+      saveState();showToast('✅ Supabase Config Saved! Reload to apply.');
+    }
+  );
+}
+
+// --- CUSTOM CSS ---
+function openCustomCSSModal(){
+  const ss=S.siteSettings;
+  openModal('💻 Custom CSS',`
+    <div class="modal-field"><label>Your Custom CSS</label><textarea id="ccs-val" style="font-family:'JetBrains Mono',monospace;font-size:12px;min-height:180px">${ss.customCSS||''}</textarea></div>
+    <p style="font-size:11px;color:var(--muted);margin-top:8px">Added as &lt;style&gt; tag. Full CSS control.</p>`,
+    ()=>{
+      ss.customCSS=document.getElementById('ccs-val').value;
+      let el=document.getElementById('custom-css-tag');
+      if(!el){el=document.createElement('style');el.id='custom-css-tag';document.head.appendChild(el);}
+      el.textContent=ss.customCSS;
+      saveState();showToast('✅ Custom CSS Applied!');
+    }
+  );
+}
+
+// --- CUSTOM JS ---
+function openCustomJSModal(){
+  const ss=S.siteSettings;
+  openModal('⚡ Custom Script',`
+    <div class="modal-field"><label>Your Custom JavaScript</label><textarea id="cjs-val" style="font-family:'JetBrains Mono',monospace;font-size:12px;min-height:180px">${ss.customJS||''}</textarea></div>
+    <p style="font-size:11px;color:var(--red);margin-top:8px">⚠ Be careful — invalid JS can break the site.</p>`,
+    ()=>{
+      ss.customJS=document.getElementById('cjs-val').value;
+      try{if(ss.customJS)eval(ss.customJS);}catch(e){showToast('⚠ JS Error: '+e.message);return;}
+      saveState();showToast('✅ Custom Script Saved & Executed!');
+    }
+  );
+}
+
+// --- CURRENCY & PRICING ---
+function openCurrencyModal(){
+  const ss=S.siteSettings;
+  openModal('💰 Currency & Pricing Display',`
+    <div class="modal-field"><label>Currency Symbol</label><input id="cur-sym" type="text" value="${ss.currencySymbol||'₹'}" placeholder="₹ / $ / £ / AED"></div>
+    <div class="modal-field"><label>Pricing Suffix</label><input id="cur-sfx" type="text" value="${ss.currencySuffix||''}" placeholder="(e.g. /year or blank)"></div>
+    <div class="modal-field"><label>Discount Badge Text</label><input id="cur-disc" type="text" value="${ss.discountBadge||'Save up to 40%'}" placeholder="Save up to 40%"></div>`,
+    ()=>{
+      ss.currencySymbol=document.getElementById('cur-sym').value;
+      ss.currencySuffix=document.getElementById('cur-sfx').value;
+      ss.discountBadge=document.getElementById('cur-disc').value;
+      saveState();showToast('✅ Currency Settings Saved!');
+    }
+  );
+}
+
+// --- SECTION VISIBILITY ---
+function openVisibilityModal(){
+  const ss=S.siteSettings;
+  const sections=[
+    {id:'trustbar',label:'Trust Bar'},
+    {id:'accreditations',label:'Accreditations Section'},
+    {id:'testimonials',label:'Testimonials Section'},
+    {id:'wa-float',label:'WhatsApp Button'},
+  ];
+  const fields=sections.map(s=>`
+    <div class="modal-field"><label>${s.label}</label>
+      <select id="vis-${s.id}">
+        <option value="1" ${(ss['vis_'+s.id]!==false)?'selected':''}>Visible</option>
+        <option value="0" ${(ss['vis_'+s.id]===false)?'selected':''}>Hidden</option>
+      </select>
+    </div>`).join('');
+  openModal('👁 Section Visibility',fields,()=>{
+    sections.forEach(s=>{
+      const show=document.getElementById('vis-'+s.id).value==='1';
+      ss['vis_'+s.id]=show;
+      const el=document.getElementById(s.id);
+      if(el)el.style.display=show?'':'none';
+    });
+    saveState();showToast('✅ Visibility Settings Saved!');
+  });
+}
+
+// --- FONTS MODAL ---
+function openFontsModal(){
+  const ss=S.siteSettings;
+  openModal('🔤 Font Style',`
+    <div class="modal-field"><label>Heading Font</label>
+      <select id="fnt-heading">
+        <option value="Playfair Display" ${(ss.fontHeading||'Playfair Display')==='Playfair Display'?'selected':''}>Playfair Display (Elegant)</option>
+        <option value="Georgia" ${ss.fontHeading==='Georgia'?'selected':''}>Georgia (Classic)</option>
+        <option value="Merriweather" ${ss.fontHeading==='Merriweather'?'selected':''}>Merriweather</option>
+        <option value="DM Sans" ${ss.fontHeading==='DM Sans'?'selected':''}>DM Sans (Modern)</option>
+      </select>
+    </div>
+    <div class="modal-field"><label>Body Font</label>
+      <select id="fnt-body">
+        <option value="DM Sans" ${(ss.fontBody||'DM Sans')==='DM Sans'?'selected':''}>DM Sans (Default)</option>
+        <option value="Inter" ${ss.fontBody==='Inter'?'selected':''}>Inter</option>
+        <option value="Roboto" ${ss.fontBody==='Roboto'?'selected':''}>Roboto</option>
+        <option value="Open Sans" ${ss.fontBody==='Open Sans'?'selected':''}>Open Sans</option>
+      </select>
+    </div>`,
+    ()=>{
+      ss.fontHeading=document.getElementById('fnt-heading').value;
+      ss.fontBody=document.getElementById('fnt-body').value;
+      document.querySelectorAll('.section-h2,.hero-h1,.stat-num,.pb-num,.fc-title,.course-h3').forEach(el=>{el.style.fontFamily=ss.fontHeading;});
+      document.body.style.fontFamily=ss.fontBody+',sans-serif';
+      saveState();showToast('✅ Fonts Updated!');
+    }
+  );
+}
+
+// --- BACKGROUND MODAL ---
+function openBgModal(){
+  const ss=S.siteSettings;
+  openModal('🌌 Background Effect',`
+    <div class="modal-field"><label>Background Style</label>
+      <select id="bg-style">
+        <option value="default" ${(ss.bgStyle||'default')==='default'?'selected':''}>Dark Gradient (Default)</option>
+        <option value="solid" ${ss.bgStyle==='solid'?'selected':''}>Solid Dark</option>
+        <option value="navy" ${ss.bgStyle==='navy'?'selected':''}>Deep Navy</option>
+        <option value="charcoal" ${ss.bgStyle==='charcoal'?'selected':''}>Charcoal</option>
+      </select>
+    </div>`,
+    ()=>{
+      ss.bgStyle=document.getElementById('bg-style').value;
+      const bgs={default:'#080810',solid:'#0A0A0A',navy:'#030818',charcoal:'#111111'};
+      document.documentElement.style.setProperty('--dark',bgs[ss.bgStyle]||'#080810');
+      saveState();showToast('✅ Background Updated!');
+    }
+  );
+}
+
+// --- BUTTON STYLE ---
+function openButtonStyleModal(){
+  const ss=S.siteSettings;
+  openModal('🔘 Button Style',`
+    <div class="modal-field"><label>Border Radius</label>
+      <select id="btn-radius">
+        <option value="10px" ${(ss.btnRadius||'10px')==='10px'?'selected':''}>Rounded (Default)</option>
+        <option value="4px" ${ss.btnRadius==='4px'?'selected':''}>Square</option>
+        <option value="100px" ${ss.btnRadius==='100px'?'selected':''}>Pill</option>
+      </select>
+    </div>
+    <div class="modal-field"><label>Primary Button Text</label><input id="btn-text" type="text" value="${ss.primaryBtnText||'Apply Now →'}"></div>`,
+    ()=>{
+      ss.btnRadius=document.getElementById('btn-radius').value;
+      ss.primaryBtnText=document.getElementById('btn-text').value;
+      document.querySelectorAll('.btn-gold,.nav-apply,.form-submit,.course-enroll-btn').forEach(el=>{el.style.borderRadius=ss.btnRadius;});
+      document.querySelectorAll('.nav-apply').forEach(el=>{el.textContent=ss.primaryBtnText;});
+      saveState();showToast('✅ Button Style Updated!');
+    }
+  );
+}
+
+// --- LOGO MODAL ---
+function openLogoModal(){
+  const ss=S.siteSettings;
+  openModal('🖼 Logo Settings',`
+    <div class="modal-field"><label>Logo Emoji / Icon</label><input id="lg-icon" type="text" value="${ss.logoIcon||'🎓'}"></div>
+    <div class="modal-field"><label>Logo Background Color</label><input id="lg-bg" type="color" value="${ss.logoBg||'#C9A96E'}"></div>
+    <div class="modal-field"><label>Logo Icon Size (px)</label><input id="lg-size" type="number" value="${ss.logoSize||20}" min="10" max="40"></div>`,
+    ()=>{
+      ss.logoIcon=document.getElementById('lg-icon').value;
+      ss.logoBg=document.getElementById('lg-bg').value;
+      ss.logoSize=document.getElementById('lg-size').value;
+      document.querySelectorAll('.logo-icon').forEach(el=>{
+        el.textContent=ss.logoIcon;
+        el.style.background=`linear-gradient(135deg,${ss.logoBg},${ss.logoBg}cc)`;
+        el.style.fontSize=ss.logoSize+'px';
+      });
+      saveState();showToast('✅ Logo Updated!');
+    }
+  );
+}
+
+// --- EXPORT/IMPORT SITE DATA ---
+function exportSiteData(){
+  const json=JSON.stringify(S,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='sitedata_'+Date.now()+'.json';a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ Site Data Exported!');
+}
+
+function importSiteData(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        Object.assign(S,data);
+        saveState();renderAll();applyColorsFromState();applyAnnouncement();applyCountdown();
+        showToast('✅ Site Data Imported Successfully!');
+      }catch(err){showToast('❌ Invalid JSON file!');}
+    };
+    reader.readAsText(file);
+  };
+  inp.click();
+}
+
+// --- EXPOSE NEW GLOBALS ---
+window.openEditCoursesListModal=openEditCoursesListModal;
+window.openEditTestimonialsModal=openEditTestimonialsModal;
+window.openManageCertsModal=openManageCertsModal;
+window.openLeadStatsModal=openLeadStatsModal;
+window.clearLeads=clearLeads;
+window.openNavModal=openNavModal;
+window.openTrustBarModal=openTrustBarModal;
+window.openCourseSectionModal=openCourseSectionModal;
+window.openEnrollFormModal=openEnrollFormModal;
+window.openAccredSectionModal=openAccredSectionModal;
+window.openSeoModal=openSeoModal;
+window.openAnnouncementModal=openAnnouncementModal;
+window.openPopupModal=openPopupModal;
+window.openCountdownModal=openCountdownModal;
+window.openChatBubbleModal=openChatBubbleModal;
+window.openPasswordModal=openPasswordModal;
+window.openSupabaseModal=openSupabaseModal;
+window.openCustomCSSModal=openCustomCSSModal;
+window.openCustomJSModal=openCustomJSModal;
+window.openCurrencyModal=openCurrencyModal;
+window.openVisibilityModal=openVisibilityModal;
+window.openFontsModal=openFontsModal;
+window.openBgModal=openBgModal;
+window.openButtonStyleModal=openButtonStyleModal;
+window.openLogoModal=openLogoModal;
+window.exportSiteData=exportSiteData;
+window.importSiteData=importSiteData;
+window.applyColorsFromState=applyColorsFromState;
+window.applyAnnouncement=applyAnnouncement;
+window.applyCountdown=applyCountdown;
+
+
 function submitForm(){
   const name = document.getElementById('f-name').value.trim();
   const email = document.getElementById('f-email').value.trim();
@@ -1626,9 +2333,11 @@ window.addEventListener('scroll',()=>{
 document.addEventListener('DOMContentLoaded',()=>{
   if(!S.leads) S.leads=[];
   renderAll(); // pehle default dikhao (fast)
+  applyAnnouncement();
+  applyCountdown();
   checkHash();
   window.addEventListener('hashchange',checkHash);
-  document.getElementById('cert-input').addEventListener('keydown',e=>{if(e.key==='Enter')verifyCert();});
+  const ci=document.getElementById('cert-input');if(ci)ci.addEventListener('keydown',e=>{if(e.key==='Enter')verifyCert();});
   loadFromSupabase(); // phir Supabase se live data lo
 });
 
@@ -1666,4 +2375,3 @@ window.startInlineEdit=startInlineEdit;
 </script>
 </body>
 </html>
-
